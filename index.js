@@ -63,6 +63,7 @@ app.post("/product", async (req, res) => {
         })
     }
 })
+
 app.post("/products", async (req, res) => {
     try {
         const result = await Product.insertMany(req.body);
@@ -76,6 +77,30 @@ app.post("/products", async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Couldn't create the products",
+            error: error.message
+        })
+    }
+})
+app.get("/products", async (req, res) => {
+    try {
+        const products = await Product.find();
+
+        if (!products) {
+            return res.status(404).json({
+                success: false,
+                message: "Products not found"
+            })
+        }
+
+        res.status(201).json({
+            success: true,
+            message: "Successfully get the products",
+            products
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Couldn't get the products",
             error: error.message
         })
     }

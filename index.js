@@ -53,7 +53,7 @@ app.post("/product", async (req, res) => {
         res.status(201).json({
             success: true,
             message: "Successfully created the product",
-            details: result
+            data: result
         })
     } catch (error) {
         res.status(500).json({
@@ -71,7 +71,7 @@ app.post("/products", async (req, res) => {
         res.status(201).json({
             success: true,
             message: "Successfully created the products",
-            details: result
+            data: result
         })
     } catch (error) {
         res.status(500).json({
@@ -92,15 +92,42 @@ app.get("/products", async (req, res) => {
             })
         }
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             message: "Successfully get the products",
-            products
+            data: products
         })
     } catch (error) {
         res.status(500).json({
             success: false,
             message: "Couldn't get the products",
+            error: error.message
+        })
+    }
+})
+
+app.get("/products/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const product = await Product.findOne({ _id: id }).select({ _id: 0, title: 1, price: 1 });
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Successfully get the product",
+            data: product
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Couldn't get the product",
             error: error.message
         })
     }

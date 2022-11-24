@@ -28,6 +28,10 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    rating: {
+        type: Number,
+        required: true
+    },
     description: {
         type: String,
         required: true
@@ -84,23 +88,10 @@ app.post("/products", async (req, res) => {
 app.get("/products", async (req, res) => {
     try {
 
-        const { price } = req.query;
-
-        let products;
-
-        if (price) {
-            products = await Product.find({ price: { $gt: 1200 } });
-            // products = await Product.find({ price: { $gte: 1200 } });
-            // products = await Product.find({ price: { $lt: 1200 } });
-            // products = await Product.find({ price: { $lte: 1200 } });
-            // products = await Product.find({ price: { $eq: 1200 } });
-            // products = await Product.find({ price: { $nt: 1200 } });
-            // products = await Product.find({ price: { $in: 1200 } });
-            // products = await Product.find({ price: { $nin: 1200 } });
-        }
-        else {
-            products = await Product.find();
-        }
+        // const products = await Product.find({ $and: [{ price: { $gt: 10000 } }, { rating: { $gt: 4.2 } }] });
+        // const products = await Product.find({ $or: [{ price: { $gt: 10000 } }, { rating: { $gt: 4.2 } }] });
+        // const products = await Product.find({ $nor: [{ price: { $gt: 10000 } }, { rating: { $gt: 4.2 } }] });
+        const products = await Product.find({ price: { $not: { $eq: 15000 } } });
 
         if (!products) {
             return res.status(404).json({

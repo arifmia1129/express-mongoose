@@ -93,7 +93,9 @@ app.get("/products", async (req, res) => {
         // const products = await Product.find({ $nor: [{ price: { $gt: 10000 } }, { rating: { $gt: 4.2 } }] });
         // const products = await Product.find({ price: { $not: { $eq: 15000 } } });
 
-        const products = await Product.find().countDocuments();
+        // const products = await Product.find().countDocuments();
+
+        const products = await Product.find().sort({ price: 1 }).select({ title: 1, price: 1, _id: 0 });
 
         if (!products) {
             return res.status(404).json({

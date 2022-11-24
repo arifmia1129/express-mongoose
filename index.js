@@ -95,7 +95,9 @@ app.get("/products", async (req, res) => {
 
         // const products = await Product.find().countDocuments();
 
-        const products = await Product.find().sort({ price: 1 }).select({ title: 1, price: 1, _id: 0 });
+        // const products = await Product.find().sort({ price: 1 }).select({ title: 1, price: 1, _id: 0 });
+
+        const products = await Product.find();
 
         if (!products) {
             return res.status(404).json({
@@ -140,6 +142,40 @@ app.get("/products/:id", async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Couldn't get the product",
+            error: error.message
+        })
+    }
+})
+app.delete("/products/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // const response = await Product.deleteOne({ _id: id });
+        const product = await Product.findByIdAndDelete({ _id: id });
+        console.log(id);
+
+        // if (!response.acknowledged || !response.deletedCount) {
+        //     return res.status(404).json({
+        //         success: false,
+        //         message: "Product was not deleted"
+        //     })
+        // }
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Product was not deleted"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Successfully deleted the product",
+            data: product
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Couldn't deleted the product",
             error: error.message
         })
     }

@@ -90,13 +90,13 @@ app.get("/products", async (req, res) => {
 
         if (price) {
             products = await Product.find({ price: { $gt: 1200 } });
-            products = await Product.find({ price: { $gte: 1200 } });
-            products = await Product.find({ price: { $lt: 1200 } });
-            products = await Product.find({ price: { $lte: 1200 } });
-            products = await Product.find({ price: { $eq: 1200 } });
-            products = await Product.find({ price: { $nt: 1200 } });
-            products = await Product.find({ price: { $in: 1200 } });
-            products = await Product.find({ price: { $nin: 1200 } });
+            // products = await Product.find({ price: { $gte: 1200 } });
+            // products = await Product.find({ price: { $lt: 1200 } });
+            // products = await Product.find({ price: { $lte: 1200 } });
+            // products = await Product.find({ price: { $eq: 1200 } });
+            // products = await Product.find({ price: { $nt: 1200 } });
+            // products = await Product.find({ price: { $in: 1200 } });
+            // products = await Product.find({ price: { $nin: 1200 } });
         }
         else {
             products = await Product.find();

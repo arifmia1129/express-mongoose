@@ -22,19 +22,45 @@ const connectDB = async () => {
 const productSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true
+        required: true,
+        trim: true,
+        maxLength: 15,
+        minLength: 5,
+        enum: {
+            values: ["iphone", "samsung", "oppo"],
+            message: "{VALUE} is not valid"
+        }
     },
     price: {
         type: Number,
-        required: true
+        required: true,
+        max: 200000,
+        min: 10000
     },
     rating: {
         type: Number,
-        required: true
+        required: true,
+        validate: {
+            validator: function (v) {
+                return v === 5;
+            },
+            message: (props) => `${props.value} is not valid. Rating must be 5.`
+        }
     },
     description: {
         type: String,
         required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        validate: {
+            validator: function (v) {
+                return /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v)
+            },
+            message: (props) => `${props.value} not valid email`
+        }
     },
     createAt: {
         type: Date,
@@ -152,7 +178,6 @@ app.delete("/products/:id", async (req, res) => {
 
         // const response = await Product.deleteOne({ _id: id });
         const product = await Product.findByIdAndDelete({ _id: id });
-        console.log(id);
 
         // if (!response.acknowledged || !response.deletedCount) {
         //     return res.status(404).json({
@@ -176,6 +201,41 @@ app.delete("/products/:id", async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Couldn't deleted the product",
+            error: error.message
+        })
+    }
+})
+app.patch("/products/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // const response = await Product.deleteOne({ _id: id });
+        const product = await Product.findByIdAndUpdate({ _id: id }, {
+            $set: req.body,
+        }, { new: true });
+
+        // if (!response.acknowledged || !response.deletedCount) {
+        //     return res.status(404).json({
+        //         success: false,
+        //         message: "Product was not deleted"
+        //     })
+        // }
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Product was not updated"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Successfully updated the product",
+            data: product
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Couldn't updated the product",
             error: error.message
         })
     }
